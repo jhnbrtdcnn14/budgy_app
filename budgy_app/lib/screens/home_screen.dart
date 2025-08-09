@@ -92,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           const FuturisticBackground(),
-          UpperLeftCircularBlur(),
-          LowerRightCircularBlur(),
+          // UpperLeftCircularBlur(),
+          // LowerRightCircularBlur(),
 
           // Actual Home Screen UI
           SafeArea(
@@ -137,17 +137,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     controller: _salaryController,
                     keyboardType: TextInputType.number,
                     cursorColor: AppColors.white,
-                    style: const TextStyle(color: AppColors.white),
+                    style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
                     decoration: const InputDecoration(
                       labelText: 'Monthly Salary',
-                      labelStyle: TextStyle(color: AppColors.white),
+                      labelStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
                       prefixText: '₱',
-                      prefixStyle: TextStyle(color: AppColors.white),
+                      prefixStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: AppColors.white),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.white, width: 2),
+                        borderSide: BorderSide(color: AppColors.white, width: 3),
                       ),
                     ),
                   ),
@@ -155,14 +155,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Calculate Button
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
+                      SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: 150,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.white,
+                            foregroundColor: AppColors.white,
+                          ),
                           onPressed: () => setState(() {}),
                           child: AppText(
                             text: 'Calculate',
                             size: "medium",
-                            color: AppColors.purple,
+                            color: AppColors.lightergrey,
                             isBold: true,
                             isCenter: true,
                           ),
@@ -189,24 +198,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                color: Colors.purple.withOpacity(0.3),
-                                elevation: 0,
+                                color: AppColors.white,
+                                elevation: 2,
                                 child: ListTile(
                                   title: AppText(
                                     text: a.name,
                                     size: "medium",
-                                    color: AppColors.white,
+                                    color: AppColors.lightergrey,
                                     isBold: true,
                                   ),
                                   subtitle: AppText(
                                     text: '${a.percentage.toStringAsFixed(0)}%',
                                     size: "small",
-                                    color: AppColors.white,
+                                    color: AppColors.lightergrey,
                                   ),
                                   trailing: AppText(
                                     text: '₱${amount}',
                                     size: "large",
-                                    color: AppColors.white,
+                                    color: AppColors.darkgrey,
                                     isBold: true,
                                   ),
                                 ),
@@ -225,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ElevatedButton(
                             onPressed: _saveBudget,
                             style: ElevatedButton.styleFrom(
+                              elevation: 2,
                               backgroundColor: AppColors.purple,
                               foregroundColor: AppColors.white,
                             ),
@@ -270,7 +280,7 @@ class LowerRightCircularBlur extends StatelessWidget {
             radius: 1.2,
             colors: [
               AppColors.purple,
-              AppColors.white,
+              AppColors.lightpurple,
             ],
             stops: [
               0.0,
@@ -302,7 +312,7 @@ class UpperLeftCircularBlur extends StatelessWidget {
             center: Alignment(-0.5, -0.8),
             radius: 1.2,
             colors: [
-              AppColors.white,
+              AppColors.lightpurple,
               AppColors.purple,
             ],
             stops: [

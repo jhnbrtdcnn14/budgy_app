@@ -43,7 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         children: [
           const FuturisticBackground(),
           // UpperLeftCircularBlur(),
-          LowerRightCircularBlur(),
+          // LowerRightCircularBlur(),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -88,13 +88,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                color: Colors.purple.withOpacity(0.4), // Transparent
+                                color: AppColors.white, // Transparent
                                 elevation: 0,
                                 child: ListTile(
                                   title: AppText(
                                     text: '₱${amount}',
                                     size: "large",
-                                    color: AppColors.white,
+                                    color: AppColors.darkgrey,
                                     isBold: true,
                                   ),
                                   subtitle: Column(
@@ -104,7 +104,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         'Date: $dateStr',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: AppColors.white,
+                                          color: AppColors.lightergrey,
                                         ),
                                       ),
                                       const SizedBox(height: 8),
@@ -120,9 +120,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           final amount = formatter.format(e.value['amount']);
                                           return TableRow(
                                             children: [
-                                              Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: AppText(text: e.key, size: 'small', color: AppColors.white)),
-                                              Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: AppText(text: '$percentage%', size: 'small', color: AppColors.white)),
-                                              Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: AppText(text: '₱$amount', size: 'small', color: AppColors.white)),
+                                              Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: AppText(text: e.key, size: 'small', color: AppColors.lightergrey)),
+                                              Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: AppText(text: '$percentage%', size: 'small', color: AppColors.lightergrey)),
+                                              Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                                  child: AppText(
+                                                    text: '₱$amount',
+                                                    size: 'small',
+                                                    color: AppColors.lightergrey,
+                                                  )),
                                             ],
                                           );
                                         }).toList(),
