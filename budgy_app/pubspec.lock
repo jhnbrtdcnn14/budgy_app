@@ -25,6 +25,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  base58check:
+    dependency: transitive
+    description:
+      name: base58check
+      sha256: "6c300dfc33e598d2fe26319e13f6243fea81eaf8204cb4c6b69ef20a625319a5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  bech32:
+    dependency: transitive
+    description:
+      name: bech32
+      sha256: "156cbace936f7720c79a79d16a03efad343b1ef17106716e04b8b8e39f99f7f7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -73,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      sha256: b30acd5944035672bc15c6b7a8b47d773e41e2f17de064350988c5d02adb1c68
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
   crypto:
     dependency: transitive
     description:
@@ -89,6 +113,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: "567c64b3cb4cf82397aac55f4f0cbd3ca20d77c6c03bedbc4ceaddc08904aef7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   fake_async:
     dependency: transitive
     description:
@@ -109,10 +141,10 @@ packages:
     dependency: transitive
     description:
       name: file
-      sha256: a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4
+      sha256: "1b92bec4fc2a72f59a8e15af5f52cd441e4a7860b49499d69dfa817af20e925d"
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.1"
+    version: "6.1.4"
   fixnum:
     dependency: transitive
     description:
@@ -121,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: "155556c4aba56c8474308d51b4e5446b80a07db9ab66a3cb74aff05c110df982"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.60.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -142,6 +182,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.14.4"
+  flutter_multi_formatter:
+    dependency: "direct main"
+    description:
+      name: flutter_multi_formatter
+      sha256: "7b11b05b7666bd44d1dcf39f1ab5f35ecd0afcc8954f0714ebccf17856209998"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.13.8"
   flutter_riverpod:
     dependency: transitive
     description:
@@ -154,10 +202,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_secure_storage
-      sha256: "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
+      sha256: "22dbf16f23a4bcf9d35e51be1c84ad5bb6f627750565edd70dab70f3ff5fff8f"
       url: "https://pub.dev"
     source: hosted
-    version: "9.2.4"
+    version: "8.1.0"
   flutter_secure_storage_linux:
     dependency: transitive
     description:
@@ -194,10 +242,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage_windows
-      sha256: b20b07cb5ed4ed74fc567b78a72936203f587eba460af1df11281c9326cd3709
+      sha256: "38f9501c7cb6f38961ef0e1eacacee2b2d4715c63cc83fe56449c4d3d0b47255"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.2"
+    version: "2.1.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -581,14 +629,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  win32:
-    dependency: transitive
-    description:
-      name: win32
-      sha256: daf97c9d80197ed7b619040e86c8ab9a9dad285e7671ee7390f9180cc828a51e
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.10.1"
   xdg_directories:
     dependency: transitive
     description:

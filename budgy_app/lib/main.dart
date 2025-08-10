@@ -1,12 +1,14 @@
 import 'package:budgy_app/components/colors.dart';
-import 'package:budgy_app/screens/history_scree.dart';
-import 'package:budgy_app/screens/splash_screen.dart';
+import 'package:budgy_app/screens/history_screen.dart';
+import 'package:budgy_app/screens/statistics_screen.dart';
+import 'package:budgy_app/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 
 void main() {
-  runApp(const BudgetApp());
+  runApp(ProviderScope(child: const BudgetApp()));
 }
 
 class BudgetApp extends StatelessWidget {
@@ -21,12 +23,13 @@ class BudgetApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.purple),
         scaffoldBackgroundColor: AppColors.white,
       ),
-      initialRoute: '/splash',
+      initialRoute: '/welcome',
       routes: {
-        '/splash': (context) => const SplashScreen(),
+        '/welcome': (context) => const WelcomeScreen(),
         '/home': (context) => const HomeScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/history': (context) => const HistoryScreen(),
+        '/statistic': (context) => const StatisticsScreen(),
       },
     );
   }

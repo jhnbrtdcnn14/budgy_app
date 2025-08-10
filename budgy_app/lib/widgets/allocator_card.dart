@@ -1,0 +1,45 @@
+import 'package:budgy_app/components/colors.dart';
+import 'package:budgy_app/components/text.dart';
+import 'package:budgy_app/models/allocator_model.dart';
+import 'package:flutter/material.dart';
+
+class AllocatorCard extends StatelessWidget {
+  final Allocator allocator;
+  final String formattedAmount;
+  const AllocatorCard({
+    required this.allocator,
+    required this.formattedAmount,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: AppColors.white.withOpacity(0.2),
+      elevation: 2,
+      child: ListTile(
+        title: AppText(
+          text: allocator.name,
+          size: "medium",
+          color: AppColors.white,
+          isBold: true,
+        ),
+        subtitle: AppText(
+          text: '${allocator.percentage.toStringAsFixed(0)}%',
+          size: "small",
+          color: AppColors.lightpurple,
+        ),
+        trailing: AppText(
+          text: '₱$formattedAmount',
+          size: "large",
+          color: AppColors.white,
+          isBold: true,
+        ),
+      ),
+    );
+  }
+}

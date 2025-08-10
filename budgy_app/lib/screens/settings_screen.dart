@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../components/text.dart';
@@ -29,21 +27,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void dispose() {
-    for (final c in _nameControllers) c.dispose();
-    for (final c in _percentControllers) c.dispose();
+    _disposeControllers();
     super.dispose();
   }
 
-  Future<void> _loadAllocators() async {
-    final data = await _storageService.loadAllocators();
-    _allocators = data;
+  void _disposeControllers() {
+    for (final c in _nameControllers) {
+      c.dispose();
+    }
+    for (final c in _percentControllers) {
+      c.dispose();
+    }
     _nameControllers.clear();
     _percentControllers.clear();
-    for (final a in _allocators) {
-      _nameControllers.add(TextEditingController(text: a.name));
-      _percentControllers.add(TextEditingController(text: a.percentage.toString()));
+  }
+
+  void _createControllersFromAllocators() {
+    _disposeControllers();
+    for (final alloc in _allocators) {
+      _nameControllers.add(TextEditingController(text: alloc.name));
+      _percentControllers.add(TextEditingController(text: alloc.percentage.toString()));
     }
-    setState(() => _loading = false);
+  }
+
+  Future<void> _loadAllocators() async {
+    final loaded = await _storageService.loadAllocators();
+    setState(() {
+      _allocators = loaded;
+      _createControllersFromAllocators();
+      _loading = false;
+    });
   }
 
   void _addAllocator() {
@@ -75,48 +88,139 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
     }
 
-    final total = _allocators.fold<double>(0, (s, a) => s + a.percentage);
+    final total = _allocators.fold<double>(0, (sum, a) => sum + a.percentage);
 
     if (total != 100.0) {
       final proceed = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (ctx) => AlertDialog(
           backgroundColor: AppColors.white,
-          title: AppText(text: 'Total is not 100%', size: 'medium', color: AppColors.red),
+          title: const AppText(
+            text: 'Total is not 100%',
+            size: 'medium',
+            color: AppColors.red,
+            isBold: true,
+          ),
           content: AppText(
             text: 'Current total is ${total.toStringAsFixed(1)}%.',
             size: 'small',
             color: AppColors.darkgrey,
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
           ],
         ),
       );
-
       if (proceed != true) return;
     }
 
     await _storageService.saveAllocators(_allocators);
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: AppText(
-          text: 'Allocators saved!',
-          size: "medium",
-          color: AppColors.purple,
-          isBold: true,
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: AppText(
+        text: 'Allocators saved!',
+        size: "medium",
+        color: AppColors.purple,
+        isBold: true,
+      ),
+      backgroundColor: AppColors.white,
+    ));
+    Navigator.pop(context);
+  }
+
+  Widget _buildAllocatorRow(int index) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: AppColors.white.withOpacity(0.2),
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: TextField(
+                controller: _nameControllers[index],
+                style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  labelText: 'Name',
+                  labelStyle: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: TextField(
+                controller: _percentControllers[index],
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  labelText: 'Percentage',
+                  labelStyle: TextStyle(color: AppColors.white),
+                  suffixText: '%',
+                  suffixStyle: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: AppColors.red),
+              onPressed: () => _removeAllocator(index),
+            ),
+          ],
         ),
-        backgroundColor: AppColors.white,
-      ));
-      Navigator.pop(context);
-    }
+      ),
+    );
+  }
+
+  Widget _buildTotalDisplay(double total) {
+    final isValid = total == 100;
+    final fillColor = isValid ? AppColors.white.withOpacity(0.1) : AppColors.red;
+    final backgroundColor = AppColors.white.withOpacity(0.2);
+
+    return Container(
+      width: double.infinity,
+      height: 40,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Stack(
+        children: [
+          // Filled portion
+          FractionallySizedBox(
+            widthFactor: (total.clamp(0, 100)) / 100,
+            child: Container(
+              decoration: BoxDecoration(
+                color: fillColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+
+          // Text centered on top
+          Center(
+            child: AppText(
+              text: 'Total: ${total.toStringAsFixed(0)}%',
+              size: "medium",
+              color: AppColors.white,
+              isBold: true,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
-    final total = _allocators.fold<double>(0, (s, a) => s + a.percentage);
+    final total = _allocators.fold<double>(0, (sum, a) => sum + a.percentage);
 
     return Scaffold(
       body: Stack(
@@ -131,7 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AppText(
+                      const AppText(
                         text: 'Settings',
                         size: "xxxlarge",
                         color: AppColors.white,
@@ -139,10 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Row(
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.add, color: AppColors.white),
-                            onPressed: _addAllocator,
-                          ),
+                          IconButton(icon: const Icon(Icons.add, color: AppColors.white), onPressed: _addAllocator),
                           IconButton(
                             icon: const Icon(Icons.arrow_back, color: AppColors.white),
                             onPressed: () => Navigator.pop(context),
@@ -153,77 +254,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Total percentage
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: total != 100 ? AppColors.red : AppColors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: AppText(
-                      text: 'Total: ${total.toStringAsFixed(0)}%',
-                      size: "medium",
-                      color: AppColors.white,
-                      isBold: true,
-                    ),
-                  ),
+                  _buildTotalDisplay(total),
                   const SizedBox(height: 10),
 
-                  // List of allocators
                   Expanded(
                     child: ListView.builder(
                       itemCount: _allocators.length,
-                      itemBuilder: (context, i) {
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          color: AppColors.white,
-                          elevation: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: TextField(
-                                    style: const TextStyle(color: AppColors.darkgrey, fontWeight: FontWeight.bold),
-                                    controller: _nameControllers[i],
-                                    decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide.none), labelText: 'Name', labelStyle: TextStyle(color: AppColors.darkgrey)),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  flex: 2,
-                                  child: TextField(
-                                    selectionHeightStyle: BoxHeightStyle.max,
-                                    style: const TextStyle(color: AppColors.darkgrey, fontWeight: FontWeight.bold),
-                                    controller: _percentControllers[i],
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                                      labelText: 'Percentage',
-                                      labelStyle: TextStyle(color: AppColors.darkgrey),
-                                      suffixText: '%',
-                                    ),
-                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: AppColors.red),
-                                  onPressed: () => _removeAllocator(i),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                      itemBuilder: (context, i) => _buildAllocatorRow(i),
                     ),
                   ),
                   const SizedBox(height: 10),
 
-                  // Save Button
                   Row(
                     children: [
                       Expanded(
@@ -236,7 +277,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               backgroundColor: AppColors.purple,
                               foregroundColor: AppColors.white,
                             ),
-                            child: AppText(
+                            child: const AppText(
                               text: 'Save',
                               size: "large",
                               color: AppColors.white,

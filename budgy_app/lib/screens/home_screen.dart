@@ -1,6 +1,8 @@
 import 'package:budgy_app/components/colors.dart';
 import 'package:budgy_app/components/text.dart';
+import 'package:budgy_app/widgets/allocator_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
 import '../models/allocator_model.dart';
 import '../models/budget_model.dart';
@@ -17,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final StorageService _storageService = StorageService();
   List<Allocator> _allocators = [];
   final TextEditingController _salaryController = TextEditingController();
+  final NumberFormat _formatter = NumberFormat('#,##0.00');
 
   @override
   void initState() {
@@ -37,20 +40,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double _amountFor(double salary, double percentage) => salary * percentage / 100;
 
-  Future<void> _saveBudget() async {
-    final salary = double.tryParse(_salaryController.text) ?? 0.0;
-    if (salary <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: AppText(
-            text: 'Please enter a valid salary',
-            size: "medium",
-            color: AppColors.red,
-            isBold: true,
-          ),
-          backgroundColor: AppColors.white,
+  double? _parseSalary() {
+    String rawText = _salaryController.text;
+    // Remove ₱ and commas
+    rawText = rawText.replaceAll('₱', '').replaceAll(',', '').trim();
+    final salary = double.tryParse(rawText);
+    if (salary == null || salary <= 0) return null;
+    return salary;
+  }
+
+  void _showSnackBar(String message, Color textColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AppText(
+          text: message,
+          size: "medium",
+          color: textColor,
+          isBold: true,
         ),
-      );
+        backgroundColor: AppColors.white,
+      ),
+    );
+  }
+
+  Future<void> _saveBudget() async {
+    final salary = _parseSalary();
+    if (salary == null) {
+      _showSnackBar('Please enter a valid salary', AppColors.red);
       return;
     }
 
@@ -71,185 +87,62 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await _storageService.saveBudget(budget);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: AppText(
-          text: 'Budget saved for this month!',
-          size: "medium",
-          color: AppColors.purple,
-          isBold: true,
-        ),
-        backgroundColor: AppColors.white,
-      ),
-    );
+    _showSnackBar('Budget saved to history!', AppColors.purple);
+
+    _salaryController.clear();
+    setState(() {});
+  }
+
+  void _onCalculatePressed() {
+    final salary = _parseSalary();
+    if (salary == null) {
+      _showSnackBar('Please enter a valid salary', AppColors.red);
+      return;
+    }
+    setState(() {});
+  }
+
+  String _formattedAmount(double salary, Allocator allocator) {
+    final amt = _amountFor(salary, allocator.percentage);
+    return _formatter.format(amt);
   }
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat('#,##0.00');
+    final salary = _parseSalary() ?? 0.0;
 
     return Scaffold(
       body: Stack(
         children: [
           const FuturisticBackground(),
-          // UpperLeftCircularBlur(),
-          // LowerRightCircularBlur(),
-
-          // Actual Home Screen UI
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // AppBar-like row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AppText(
-                        text: 'Budgy',
-                        size: "xxxlarge",
-                        color: AppColors.white,
-                        isBold: true,
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.history, color: AppColors.white),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/history');
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.settings, color: AppColors.white),
-                            onPressed: () async {
-                              await Navigator.pushNamed(context, '/settings');
-                              await _loadAllocators();
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  _buildAppBar(),
                   const SizedBox(height: 20),
-
-                  // Salary Input
-                  TextField(
-                    controller: _salaryController,
-                    keyboardType: TextInputType.number,
-                    cursorColor: AppColors.white,
-                    style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                    decoration: const InputDecoration(
-                      labelText: 'Monthly Salary',
-                      labelStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                      prefixText: '₱',
-                      prefixStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.white),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.white, width: 3),
-                      ),
-                    ),
-                  ),
+                  _buildSalaryInput(),
                   const SizedBox(height: 12),
-
-                  // Calculate Button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        width: 150,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.white,
-                            foregroundColor: AppColors.white,
-                          ),
-                          onPressed: () => setState(() {}),
-                          child: AppText(
-                            text: 'Calculate',
-                            size: "medium",
-                            color: AppColors.lightergrey,
-                            isBold: true,
-                            isCenter: true,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildCalculateButton(),
                   const SizedBox(height: 20),
-
-                  // Allocator List
                   Expanded(
                     child: _allocators.isEmpty
                         ? const Center(child: CircularProgressIndicator())
                         : ListView.builder(
                             itemCount: _allocators.length,
                             itemBuilder: (context, index) {
-                              final a = _allocators[index];
-                              final salary = double.tryParse(_salaryController.text) ?? 0.0;
-                              final amt = _amountFor(salary, a.percentage);
-                              final amount = formatter.format(amt);
-
-                              return Card(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                color: AppColors.white,
-                                elevation: 2,
-                                child: ListTile(
-                                  title: AppText(
-                                    text: a.name,
-                                    size: "medium",
-                                    color: AppColors.lightergrey,
-                                    isBold: true,
-                                  ),
-                                  subtitle: AppText(
-                                    text: '${a.percentage.toStringAsFixed(0)}%',
-                                    size: "small",
-                                    color: AppColors.lightergrey,
-                                  ),
-                                  trailing: AppText(
-                                    text: '₱${amount}',
-                                    size: "large",
-                                    color: AppColors.darkgrey,
-                                    isBold: true,
-                                  ),
-                                ),
+                              final allocator = _allocators[index];
+                              final formattedAmount = _formattedAmount(salary, allocator);
+                              return AllocatorCard(
+                                allocator: allocator,
+                                formattedAmount: formattedAmount,
                               );
                             },
                           ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Save Button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: _saveBudget,
-                            style: ElevatedButton.styleFrom(
-                              elevation: 2,
-                              backgroundColor: AppColors.purple,
-                              foregroundColor: AppColors.white,
-                            ),
-                            child: AppText(
-                              text: 'Save',
-                              size: "large",
-                              color: AppColors.white,
-                              isBold: true,
-                              isCenter: true,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildSaveButton(),
                 ],
               ),
             ),
@@ -258,29 +151,135 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget _buildAppBar() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const AppText(
+            text: 'Budgy',
+            size: "xxxlarge",
+            color: AppColors.white,
+            isBold: true,
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.bar_chart, color: AppColors.white),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/statistic');
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.percent, color: AppColors.white),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, '/settings');
+                  await _loadAllocators();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.history, color: AppColors.white),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/history');
+                },
+              ),
+            ],
+          ),
+        ],
+      );
+
+  Widget _buildSalaryInput() => TextField(
+        controller: _salaryController,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          CurrencyInputFormatter(
+            leadingSymbol: '₱',
+            useSymbolPadding: true,
+            thousandSeparator: ThousandSeparator.Comma,
+            mantissaLength: 0, // no decimal places for salary
+          ),
+        ],
+        cursorColor: AppColors.white,
+        style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 25),
+        decoration: const InputDecoration(
+          labelText: 'Input Salary',
+          labelStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.white, width: 3),
+          ),
+        ),
+      );
+
+  Widget _buildCalculateButton() => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.white,
+                foregroundColor: AppColors.white,
+              ),
+              onPressed: _onCalculatePressed,
+              child: const AppText(
+                text: 'Calculate',
+                size: "medium",
+                color: AppColors.lightergrey,
+                isBold: true,
+                isCenter: true,
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildSaveButton() => Row(
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _saveBudget,
+                style: ElevatedButton.styleFrom(
+                  elevation: 2,
+                  backgroundColor: AppColors.purple,
+                  foregroundColor: AppColors.white,
+                ),
+                child: const AppText(
+                  text: 'Save',
+                  size: "large",
+                  color: AppColors.white,
+                  isBold: true,
+                  isCenter: true,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
 }
 
 class LowerRightCircularBlur extends StatelessWidget {
-  const LowerRightCircularBlur({
-    super.key,
-  });
+  const LowerRightCircularBlur({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       right: -100,
-      bottom: -150,
+      bottom: -100,
       child: Container(
         width: 300,
         height: 300,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
-            center: Alignment(0, 0.9),
+            center: Alignment(0.5, 0.9),
             radius: 1.2,
             colors: [
-              AppColors.purple,
-              AppColors.lightpurple,
+              AppColors.black,
+              AppColors.darkpurple,
             ],
             stops: [
               0.0,
@@ -294,15 +293,13 @@ class LowerRightCircularBlur extends StatelessWidget {
 }
 
 class UpperLeftCircularBlur extends StatelessWidget {
-  const UpperLeftCircularBlur({
-    super.key,
-  });
+  const UpperLeftCircularBlur({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       left: -100,
-      top: -100,
+      top: -150,
       child: Container(
         width: 300,
         height: 300,
@@ -312,8 +309,8 @@ class UpperLeftCircularBlur extends StatelessWidget {
             center: Alignment(-0.5, -0.8),
             radius: 1.2,
             colors: [
-              AppColors.lightpurple,
-              AppColors.purple,
+              AppColors.black,
+              AppColors.darkpurple,
             ],
             stops: [
               0.0,
@@ -332,13 +329,13 @@ class FuturisticBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: RadialGradient(
           center: Alignment(-0.5, -0.2),
           radius: 1.9,
           colors: [
-            AppColors.purple,
-            AppColors.lightpurple,
+            AppColors.black,
+            AppColors.darkpurple
           ],
           stops: [
             0.0,

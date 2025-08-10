@@ -9,7 +9,6 @@ class StorageService {
   final _key = 'allocators';
   static const _budgetsKey = 'budgets';
 
-
   Future<void> saveAllocators(List<Allocator> allocators) async {
     final jsonStr = jsonEncode(allocators.map((a) => a.toJson()).toList());
     await _storage.write(key: _key, value: jsonStr);
@@ -33,7 +32,6 @@ class StorageService {
     await _storage.delete(key: _key);
   }
 
-  
   Future<void> saveBudget(Budget budget) async {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString(_budgetsKey);
@@ -46,21 +44,50 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getString(_budgetsKey);
     if (data == null) return [];
-    final list = (jsonDecode(data) as List)
-        .map((item) => Budget.fromJson(item))
-        .toList();
+    final list = (jsonDecode(data) as List).map((item) => Budget.fromJson(item)).toList();
     return list;
   }
 
   Future<void> deleteBudget(String id) async {
-  final prefs = await SharedPreferences.getInstance();
-  final data = prefs.getString(_budgetsKey);
-  if (data == null) return;
-  final List decoded = jsonDecode(data);
-  decoded.removeWhere((item) => item['id'] == id);
-  prefs.setString(_budgetsKey, jsonEncode(decoded));
-}
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(_budgetsKey);
+    if (data == null) return;
+    final List decoded = jsonDecode(data);
+    decoded.removeWhere((item) => item['id'] == id);
+    prefs.setString(_budgetsKey, jsonEncode(decoded));
+  }
 
+  Future<void> updateBudget(Budget budget, String category, double change) async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(_budgetsKey);
+    if (data == null) return;
 
+    final List decoded = jsonDecode(data);
+    final index = decoded.indexWhere((item) => item['id'] == budget.id);
+    if (index != -1) {
+      final budgetMap = decoded[index];
 
+      // Load existing maps
+      final added = (budgetMap['added'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, (v as num).toDouble()));
+      final deducted = (budgetMap['deducted'] as Map<String, dynamic>? ?? {}).map((k, v) => MapEntry(k, (v as num).toDouble()));
+
+      // Ensure category exists
+      added.putIfAbsent(category, () => 0);
+      deducted.putIfAbsent(category, () => 0);
+
+      // Update
+      if (change >= 0) {
+        added[category] = added[category]! + change;
+      } else {
+        deducted[category] = deducted[category]! + (-change);
+      }
+
+      // Save back
+      budgetMap['added'] = added;
+      budgetMap['deducted'] = deducted;
+      decoded[index] = budgetMap;
+
+      await prefs.setString(_budgetsKey, jsonEncode(decoded));
+    }
+  }
 }
