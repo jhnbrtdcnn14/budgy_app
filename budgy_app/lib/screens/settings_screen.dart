@@ -237,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       const AppText(
                         text: 'Settings',
-                        size: "xxxlarge",
+                        size: "xxlarge",
                         color: AppColors.white,
                         isBold: true,
                       ),
@@ -255,7 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 10),
 
                   _buildTotalDisplay(total),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
                   Expanded(
                     child: ListView.builder(

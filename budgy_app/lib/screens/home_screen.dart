@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await _storageService.saveBudget(budget);
 
-    _showSnackBar('Budget saved to history!', AppColors.purple);
+    _showSnackBar('Budget saved to budget!', AppColors.purple);
 
     _salaryController.clear();
     setState(() {});
@@ -164,22 +164,22 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.bar_chart, color: AppColors.white),
+                icon: const Icon(Icons.bar_chart_rounded, color: AppColors.white),
                 onPressed: () {
                   Navigator.pushNamed(context, '/statistic');
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.percent, color: AppColors.white),
+                icon: const Icon(Icons.percent_rounded, color: AppColors.white),
                 onPressed: () async {
                   await Navigator.pushNamed(context, '/settings');
                   await _loadAllocators();
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.history, color: AppColors.white),
+                icon: const Icon(Icons.account_balance_wallet_rounded, color: AppColors.white),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/history');
+                  Navigator.pushNamed(context, '/wallet');
                 },
               ),
             ],

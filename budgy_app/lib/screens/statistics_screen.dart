@@ -80,7 +80,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: [
                       AppText(
                         text: 'Statistics',
-                        size: "xxxlarge",
+                        size: "xxlarge",
                         color: AppColors.white,
                         isBold: true,
                       ),

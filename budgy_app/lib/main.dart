@@ -1,5 +1,5 @@
 import 'package:budgy_app/components/colors.dart';
-import 'package:budgy_app/screens/history_screen.dart';
+import 'package:budgy_app/screens/wallet_screens.dart';
 import 'package:budgy_app/screens/statistics_screen.dart';
 import 'package:budgy_app/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class BudgetApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/home': (context) => const HomeScreen(),
         '/settings': (context) => const SettingsScreen(),
-        '/history': (context) => const HistoryScreen(),
+        '/wallet': (context) => const WalletScreen(),
         '/statistic': (context) => const StatisticsScreen(),
       },
     );

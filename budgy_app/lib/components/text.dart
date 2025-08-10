@@ -30,7 +30,7 @@ class AppText extends StatelessWidget {
       textAlign: isJustify ? TextAlign.justify : (isCenter ? TextAlign.center : TextAlign.left),
       style: GoogleFonts.poppins(
         fontSize: size == "xxxlarge"
-            ? 50
+            ? 40
             : size == "xxlarge"
                 ? 30
                 : size == "xlarge"
