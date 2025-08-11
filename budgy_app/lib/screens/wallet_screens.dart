@@ -153,6 +153,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -166,15 +168,42 @@ class _WalletScreenState extends State<WalletScreen> {
                 children: [
                   _buildAppBar(),
                   const SizedBox(height: 20),
-                  AppText(text: 'Wallet', size: 'medium', color: AppColors.white),
-                  const SizedBox(height: 20),
+                  if (!_budgets.isEmpty)
+                    Column(
+                      children: [
+                        AppText(text: 'Wallet', size: 'medium', color: AppColors.white),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   Expanded(
                     child: _budgets.isEmpty
-                        ? const Center(
-                            child: AppText(
-                              text: 'No wallet yet',
-                              size: "large",
-                              color: AppColors.white,
+                        ? Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox.square(
+                                  dimension: screenHeight * 0.40,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.asset(
+                                        'icons/wallet.png',
+                                        fit: BoxFit.cover, // This makes the image fit the container
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                AppText(
+                                  text: 'Hit the add button and create your wallet today!',
+                                  size: "medium",
+                                  color: AppColors.white,
+                                  isCenter: true,
+                                ),
+                              ],
                             ),
                           )
                         : ListView.separated(

@@ -255,7 +255,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 30),
 
                   _buildTotalDisplay(total),
                   const SizedBox(height: 20),

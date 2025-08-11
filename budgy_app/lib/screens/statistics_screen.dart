@@ -63,6 +63,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 0);
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -109,10 +110,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Expanded(
                     child: _totalsByAllocator.isEmpty
                         ? Center(
-                            child: AppText(
-                              text: 'No data available',
-                              size: "large",
-                              color: AppColors.white,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox.square(
+                                  dimension: screenHeight * 0.40,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.asset(
+                                        'icons/statistics.png',
+                                        fit: BoxFit.cover, // This makes the image fit the container
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                AppText(
+                                  text: 'Here’s where you can view all your accumulated amounts by allocation.',
+                                  size: "medium",
+                                  color: AppColors.white,
+                                  isCenter: true,
+                                ),
+                              ],
                             ),
                           )
                         : ListView.separated(

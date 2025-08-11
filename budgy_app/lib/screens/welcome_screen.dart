@@ -96,7 +96,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-
 class LowerRightCircularBlur extends StatelessWidget {
   const LowerRightCircularBlur({super.key});
 
