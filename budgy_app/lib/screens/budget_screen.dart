@@ -1,5 +1,5 @@
 import 'package:budgy_app/models/budget_transaction_model.dart';
-import 'package:budgy_app/screens/home_screen.dart';
+import 'package:budgy_app/screens/calculation_screen.dart';
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../components/text.dart';
@@ -57,18 +57,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   ),
                   const SizedBox(height: 10),
                   TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.number,
+                    controller: _labelController,
                     decoration: const InputDecoration(
-                      labelText: "Amount",
+                      labelText: "Label",
                       labelStyle: TextStyle(color: AppColors.white),
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
-                    controller: _labelController,
+                    controller: _controller,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: "Label",
+                      labelText: "Amount",
                       labelStyle: TextStyle(color: AppColors.white),
                     ),
                   ),

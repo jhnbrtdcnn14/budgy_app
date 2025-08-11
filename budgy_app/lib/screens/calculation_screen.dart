@@ -8,14 +8,14 @@ import '../models/allocator_model.dart';
 import '../models/budget_model.dart';
 import '../services/storage_service.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class CalculationScreen extends StatefulWidget {
+  const CalculationScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<CalculationScreen> createState() => _CalculationScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _CalculationScreenState extends State<CalculationScreen> {
   final StorageService _storageService = StorageService();
   List<Allocator> _allocators = [];
   final TextEditingController _salaryController = TextEditingController();
@@ -87,13 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await _storageService.saveBudget(budget);
 
-    _showSnackBar('Budget saved to budget!', AppColors.purple);
+    _showSnackBar('Wallet saved!', AppColors.purple);
 
     _salaryController.clear();
     setState(() {});
+    Navigator.pushReplacementNamed(context, '/wallet');
   }
 
-  void _onCalculatePressed() {
+  void _onAmountChange() {
     final salary = _parseSalary();
     if (salary == null) {
       _showSnackBar('Please enter a valid salary', AppColors.red);
@@ -120,11 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  _buildAppBar(),
+                  _buildTopBar(),
                   const SizedBox(height: 20),
                   _buildSalaryInput(),
-                  const SizedBox(height: 12),
-                  _buildCalculateButton(),
                   const SizedBox(height: 20),
                   Expanded(
                     child: _allocators.isEmpty
@@ -152,37 +151,33 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAppBar() => Row(
+  Widget _buildTopBar() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const AppText(
-            text: 'Budgy',
-            size: "xxxlarge",
-            color: AppColors.white,
-            isBold: true,
-          ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.bar_chart_rounded, color: AppColors.white),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/statistic');
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.percent_rounded, color: AppColors.white),
-                onPressed: () async {
-                  await Navigator.pushNamed(context, '/settings');
-                  await _loadAllocators();
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_balance_wallet_rounded, color: AppColors.white),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/wallet');
-                },
-              ),
-            ],
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute horizontally
+
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                const AppText(
+                  text: 'New Wallet',
+                  size: "xxlarge",
+                  color: AppColors.white,
+                  isBold: true,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.percent_rounded, color: AppColors.white),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/allocations');
+                    await _loadAllocators();
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       );
@@ -190,6 +185,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSalaryInput() => TextField(
         controller: _salaryController,
         keyboardType: TextInputType.number,
+        onChanged: (value) {
+          _onAmountChange();
+        },
         inputFormatters: [
           CurrencyInputFormatter(
             leadingSymbol: '₱',
@@ -212,29 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  Widget _buildCalculateButton() => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            width: 150,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.white,
-                foregroundColor: AppColors.white,
-              ),
-              onPressed: _onCalculatePressed,
-              child: const AppText(
-                text: 'Calculate',
-                size: "medium",
-                color: AppColors.lightergrey,
-                isBold: true,
-                isCenter: true,
-              ),
-            ),
-          ),
-        ],
-      );
-
   Widget _buildSaveButton() => Row(
         children: [
           Expanded(
@@ -248,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   foregroundColor: AppColors.white,
                 ),
                 child: const AppText(
-                  text: 'Save',
+                  text: 'Add',
                   size: "large",
                   color: AppColors.white,
                   isBold: true,
@@ -259,68 +234,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       );
-}
-
-class LowerRightCircularBlur extends StatelessWidget {
-  const LowerRightCircularBlur({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      right: -100,
-      bottom: -100,
-      child: Container(
-        width: 300,
-        height: 300,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            center: Alignment(0.5, 0.9),
-            radius: 1.2,
-            colors: [
-              AppColors.black,
-              AppColors.darkpurple,
-            ],
-            stops: [
-              0.0,
-              1.0
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class UpperLeftCircularBlur extends StatelessWidget {
-  const UpperLeftCircularBlur({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: -100,
-      top: -150,
-      child: Container(
-        width: 300,
-        height: 300,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            center: Alignment(-0.5, -0.8),
-            radius: 1.2,
-            colors: [
-              AppColors.black,
-              AppColors.darkpurple,
-            ],
-            stops: [
-              0.0,
-              1.0
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class FuturisticBackground extends StatelessWidget {

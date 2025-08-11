@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../components/text.dart';
-import '../screens/home_screen.dart'; // for FuturisticBackground
+import 'calculation_screen.dart'; // for FuturisticBackground
 import '../models/allocator_model.dart';
 import '../services/storage_service.dart';
 
-class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+class AllocationScreen extends StatefulWidget {
+  const AllocationScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<AllocationScreen> createState() => _AllocationScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _AllocationScreenState extends State<AllocationScreen> {
   final StorageService _storageService = StorageService();
   List<Allocator> _allocators = [];
   final List<TextEditingController> _nameControllers = [];
@@ -119,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: AppText(
-        text: 'Allocators saved!',
+        text: 'Allocations saved!',
         size: "medium",
         color: AppColors.purple,
         isBold: true,
@@ -235,20 +235,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const AppText(
-                        text: 'Settings',
-                        size: "xxlarge",
-                        color: AppColors.white,
-                        isBold: true,
-                      ),
-                      Row(
-                        children: [
-                          IconButton(icon: const Icon(Icons.add, color: AppColors.white), onPressed: _addAllocator),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            const AppText(
+                              text: 'Allocations',
+                              size: "xxlarge",
+                              color: AppColors.white,
+                              isBold: true,
+                            ),
+                            IconButton(icon: const Icon(Icons.add, color: AppColors.white), onPressed: _addAllocator),
+                          ],
+                        ),
                       ),
                     ],
                   ),

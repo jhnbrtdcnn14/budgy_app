@@ -1,6 +1,6 @@
 import 'package:budgy_app/components/text.dart';
 import 'package:budgy_app/screens/budget_screen.dart';
-import 'package:budgy_app/screens/home_screen.dart';
+import 'package:budgy_app/screens/calculation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../components/colors.dart';
@@ -17,6 +17,7 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   final StorageService _storageService = StorageService();
   List<Budget> _budgets = [];
+
   final NumberFormat _currencyFormatter = NumberFormat('#,##0.00');
   final DateFormat _dateFormatter = DateFormat.yMMMMd();
 
@@ -160,8 +161,12 @@ class _WalletScreenState extends State<WalletScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTopBar(),
+                  _buildAppBar(),
+                  const SizedBox(height: 20),
+                  AppText(text: 'Wallet', size: 'medium', color: AppColors.white),
                   const SizedBox(height: 20),
                   Expanded(
                     child: _budgets.isEmpty
@@ -182,23 +187,43 @@ class _WalletScreenState extends State<WalletScreen> {
               ),
             ),
           ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/calculation');
+              },
+              backgroundColor: AppColors.purple,
+              child: Icon(
+                Icons.add,
+                color: AppColors.white,
+              ),
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildTopBar() => Row(
+  Widget _buildAppBar() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const AppText(
-            text: 'Wallet',
-            size: "xxlarge",
+            text: 'Budgy',
+            size: "xxxlarge",
             color: AppColors.white,
             isBold: true,
           ),
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.white),
-            onPressed: () => Navigator.pop(context),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.bar_chart_rounded, color: AppColors.white),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/statistic');
+                },
+              ),
+            ],
           ),
         ],
       );

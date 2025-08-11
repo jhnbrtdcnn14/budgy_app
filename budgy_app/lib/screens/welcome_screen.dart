@@ -2,7 +2,7 @@
 
 import 'package:budgy_app/components/colors.dart';
 import 'package:budgy_app/components/text.dart';
-import 'package:budgy_app/screens/home_screen.dart';
+import 'package:budgy_app/screens/calculation_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -16,11 +16,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-
-    // // Navigate after 3 seconds
-    // Future.delayed(const Duration(seconds: 3), () {
-    //   Navigator.pushReplacementNamed(context, '/home');
-    // });
   }
 
   @override
@@ -35,7 +30,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         LowerRightCircularBlur(),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/wallet');
           },
           child: Center(
             child: Column(
@@ -72,7 +67,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                           height: 64,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/home');
+                              Navigator.pushNamed(context, '/wallet');
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 2,
@@ -97,6 +92,69 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ),
       ]),
+    );
+  }
+}
+
+
+class LowerRightCircularBlur extends StatelessWidget {
+  const LowerRightCircularBlur({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: -100,
+      bottom: -100,
+      child: Container(
+        width: 300,
+        height: 300,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            center: Alignment(0.5, 0.9),
+            radius: 1.2,
+            colors: [
+              AppColors.black,
+              AppColors.darkpurple,
+            ],
+            stops: [
+              0.0,
+              1.0
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class UpperLeftCircularBlur extends StatelessWidget {
+  const UpperLeftCircularBlur({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: -100,
+      top: -150,
+      child: Container(
+        width: 300,
+        height: 300,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            center: Alignment(-0.5, -0.8),
+            radius: 1.2,
+            colors: [
+              AppColors.black,
+              AppColors.darkpurple,
+            ],
+            stops: [
+              0.0,
+              1.0
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

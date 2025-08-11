@@ -38,7 +38,7 @@ dependencies:
   flutter_launcher_icons: 
   google_fonts:
   flutter_multi_formatter:
-  fl_chart: ^0.60.0
+  fl_chart: ^0.55.1
 
 
   # The following adds the Cupertino Icons font to your application.
