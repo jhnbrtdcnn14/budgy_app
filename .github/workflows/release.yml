@@ -1,0 +1,75 @@
+name: Budgy Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v4
+
+      # Install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.2'
+
+      # Get app version from pubspec.yaml (safe for GitHub tags)
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          RAW_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          SAFE_TAG="v${RAW_VERSION//+/-}"  # Replace '+' with '-'
+          echo "TAG=$SAFE_TAG" >> $GITHUB_ENV
+          echo "RAW_VERSION=$RAW_VERSION" >> $GITHUB_ENV
+          echo "Version from pubspec.yaml: $RAW_VERSION (tag: $SAFE_TAG)"
+
+      # Prepare project
+      - name: Clean project
+        run: flutter clean
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Format Dart files
+        run: dart format --set-exit-if-changed . || true
+      - name: Analyze source
+        run: flutter analyze
+
+      # Build APK
+      - name: Build release APK
+        run: flutter build apk --release
+
+      # Rename APK for release
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/budgy.apk
+
+      # Create GitHub Release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}             # Safe tag
+          release_name: Budgy v${{ env.RAW_VERSION }}  # Original version
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload APK to Release
+      - name: Upload APK
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/budgy.apk
+          asset_name: budgy.apk
+          asset_content_type: application/vnd.android.package-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
