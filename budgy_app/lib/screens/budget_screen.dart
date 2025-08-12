@@ -77,11 +77,11 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   },
                   icon: Icon(
                     _showForm ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    color: AppColors.white,
+                    color: AppColors.primaryLight,
                   ),
                   label: AppText(
                     text: _showForm ? "Hide Form" : "Add Transaction",
-                    color: AppColors.white,
+                    color: AppColors.primaryLight,
                     size: 'small',
                   ),
                 ),
@@ -97,32 +97,32 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                   value: name,
                                   child: AppText(
                                     text: name,
-                                    color: AppColors.white,
+                                    color: AppColors.primaryLight,
                                     size: 'small',
                                   ),
                                 ))
                             .toList(),
                         onChanged: (value) => setState(() => _selectedAllocator = value),
-                        decoration: const InputDecoration(
+                        decoration:  InputDecoration(
                           labelText: "Select Category",
-                          labelStyle: TextStyle(color: AppColors.white),
+                          labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _labelController,
-                        decoration: const InputDecoration(
+                        decoration:  InputDecoration(
                           labelText: "Label",
-                          labelStyle: TextStyle(color: AppColors.white),
+                          labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
                       ),
                       const SizedBox(height: 10),
                       TextField(
                         controller: _controller,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        decoration:  InputDecoration(
                           labelText: "Amount",
-                          labelStyle: TextStyle(color: AppColors.white),
+                          labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -139,12 +139,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 _isAddition = index == 0;
                               });
                             },
-                            children: const [
+                            children:  [
                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: AppText(
                                   text: "Add",
-                                  color: AppColors.white,
+                                  color: AppColors.primaryLight,
                                   size: 'small',
                                 ),
                               ),
@@ -152,14 +152,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 padding: EdgeInsets.all(8),
                                 child: AppText(
                                   text: "Deduct",
-                                  color: AppColors.white,
+                                  color: AppColors.primaryLight,
                                   size: 'small',
                                 ),
                               ),
                             ],
                           ),
                           ElevatedButton(
-                            onPressed: _selectedAllocator == null || _controller.text.isEmpty || _labelController.text.isEmpty ? null : _adjustAmount,
+                            onPressed: _selectedAllocator == null || _controller.text.isEmpty || _labelController.text.isEmpty ? null : _saveTransaction,
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
                                 if (states.contains(WidgetState.disabled)) {
@@ -171,12 +171,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 if (states.contains(WidgetState.disabled)) {
                                   return AppColors.darkpurple.withOpacity(0.2);
                                 }
-                                return AppColors.white;
+                                return AppColors.primaryDark;
                               }),
                             ),
-                            child: const AppText(
+                            child: AppText(
                               text: "Confirm",
-                              color: AppColors.white,
+                              color: AppColors.primaryLight,
                               size: 'small',
                             ),
                           ),
@@ -190,34 +190,32 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 const SizedBox(height: 25),
 
                 if (widget.budget.transactions.isEmpty)
-                  Center(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox.square(
-                          dimension: screenHeight * 0.40,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.asset(
-                                'icons/transaction.png',
-                                fit: BoxFit.cover, // This makes the image fit the container
-                              ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox.square(
+                        dimension: screenHeight * 0.30,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.asset(
+                              'icons/transaction.png',
+                              fit: BoxFit.cover, // This makes the image fit the container
                             ),
                           ),
                         ),
-                        AppText(
-                          text: 'Track your expenses and stay on top of your spending here',
-                          size: "medium",
-                          color: AppColors.white,
-                          isCenter: true,
-                        ),
-                      ],
-                    ),
+                      ),
+                      AppText(
+                        text: 'Track your expenses and stay on top of your spending here',
+                        size: "small",
+                        color: AppColors.primaryLight,
+                        isCenter: true,
+                      ),
+                    ],
                   ),
 
                 // Transaction list with progress bars inside cards
@@ -249,7 +247,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          color: AppColors.white.withOpacity(0.1),
+                          color: AppColors.primaryLight.withOpacity(0.1),
                           elevation: 0,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -262,39 +260,58 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                     AppText(
                                       text: category,
                                       size: "large",
-                                      color: AppColors.white,
+                                      color: AppColors.primaryLight,
                                       isBold: true,
                                     ),
                                     AppText(
                                       text: formatter.format(baseAmount),
                                       size: "small",
-                                      color: AppColors.lightpurple,
+                                      color: AppColors.primaryLight,
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
 
                                 // Transactions list per category
-                                Column(
+                                Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(1), // left
+                                    1: FlexColumnWidth(1), // center
+                                    2: FlexColumnWidth(1), // right
+                                  },
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                   children: transactions.map((t) {
                                     final isAdd = t.type == "added";
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          AppText(
+                                    return TableRow(
+                                      children: [
+                                        // LEFT - Align left
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: AppText(
+                                            text: DateFormat('MMM d, yyyy').format(t.date),
+                                            size: "small",
+                                            color: isAdd ? AppColors.green : AppColors.red,
+                                          ),
+                                        ),
+                                        // CENTER - Align right
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: AppText(
                                             text: t.label,
                                             size: "xsmall",
                                             color: isAdd ? AppColors.green : AppColors.red,
                                           ),
-                                          AppText(
+                                        ),
+                                        // RIGHT - Align right
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: AppText(
                                             text: "${isAdd ? '+' : '-'} ${formatter.format(t.amount)}",
                                             size: "small",
                                             color: isAdd ? AppColors.green : AppColors.red,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     );
                                   }).toList(),
                                 ),
@@ -311,24 +328,28 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                             height: 30,
                                             width: double.infinity,
                                             decoration: BoxDecoration(
-                                              color: AppColors.black.withOpacity(0.3),
+                                              color: AppColors.tertiaryLight,
                                               borderRadius: BorderRadius.circular(8),
                                             ),
                                           ),
-                                          Container(
-                                            height: 30,
-                                            width: MediaQuery.of(context).size.width * 0.7 * percent,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.purple.withOpacity(0.8),
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
+                                          LayoutBuilder(
+                                            builder: (context, constraints) {
+                                              return Container(
+                                                height: 30,
+                                                width: constraints.maxWidth * percent,
+                                                decoration: BoxDecoration(
+                                                  color: expenseAmount > baseAmount ? AppColors.red : AppColors.purple.withOpacity(0.8),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                              );
+                                            },
                                           ),
                                           Positioned.fill(
                                             child: Center(
                                               child: AppText(
                                                 text: "${formatter.format(expenseAmount)} / ${formatter.format(baseAmount)}",
                                                 size: "xsmall",
-                                                color: AppColors.white,
+                                                color: AppColors.primaryLight,
                                               ),
                                             ),
                                           ),
@@ -342,14 +363,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     AppText(
-                                      text: "Remaining Balance",
+                                      text: expenseAmount > baseAmount ? "You have overspent" : "Remaining Balance",
                                       size: "small",
-                                      color: AppColors.white,
+                                      color: AppColors.primaryLight,
                                     ),
                                     AppText(
-                                      text: "${formatter.format(standingAmount)}",
+                                      text: "${formatter.format(standingAmount.abs())}",
                                       size: "small",
-                                      color: AppColors.white,
+                                      color: AppColors.primaryLight,
                                       isBold: true,
                                     ),
                                   ],
@@ -373,20 +394,24 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Widget _buildTopBar() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const AppText(
-            text: 'Tracker',
-            size: "xxlarge",
-            color: AppColors.white,
-            isBold: true,
-          ),
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.white),
+           IconButton(
+            icon:  Icon(Icons.arrow_back, color: AppColors.primaryLight),
             onPressed: () => Navigator.pop(context),
           ),
+          AppText(
+            text: 'Tracker',
+            size: "xxlarge",
+            color: AppColors.primaryLight,
+            isBold: true,
+          ),
+         
+           SizedBox.square(
+                        dimension: 30,
+                      )
         ],
       );
 
-  Future<void> _adjustAmount() async {
+  Future<void> _saveTransaction() async {
     final double value = double.tryParse(_controller.text) ?? 0;
     if (value <= 0 || _selectedAllocator == null) return;
 
@@ -405,7 +430,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     // Add to in-memory model as well
     widget.budget.addTransaction(transaction);
 
-    await _storageService.updateBudget(
+    await _storageService.saveTransaction(
       widget.budget,
       category,
       _isAddition ? value : -value,
@@ -422,7 +447,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   // Widget buildExpenseBars() {
   //   if (expensesPerCategory.isEmpty) {
   //     return const Center(
-  //       child: AppText(text: 'No expense data', size: 'medium', color: AppColors.white),
+  //       child: AppText(text: 'No expense data', size: 'medium', color: AppColors.primaryLight),
   //     );
   //   }
   //   return Column(
@@ -478,7 +503,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 //         AppText(
 //           text: name,
 //           size: "large",
-//           color: AppColors.white,
+//           color: AppColors.primaryLight,
 //           isBold: true,
 //         ),
 //         const SizedBox(height: 4),
@@ -489,7 +514,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 //               height: barHeight,
 //               width: barMaxWidth,
 //               decoration: BoxDecoration(
-//                 color: AppColors.white.withOpacity(0.2),
+//                 color: AppColors.primaryLight.withOpacity(0.2),
 //                 borderRadius: BorderRadius.circular(8),
 //               ),
 //             ),
@@ -508,7 +533,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 //                   // Show expense and allocation like "₱X / ₱Y"
 //                   text: "${formatter.format(amount)} / ${formatter.format(allocationAmount)}",
 //                   size: "small",
-//                   color: AppColors.white,
+//                   color: AppColors.primaryLight,
 //                   isBold: true,
 //                 ),
 //               ),

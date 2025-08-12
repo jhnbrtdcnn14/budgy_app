@@ -58,7 +58,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
           color: textColor,
           isBold: true,
         ),
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.primaryDark,
       ),
     );
   }
@@ -160,17 +160,17 @@ class _CalculationScreenState extends State<CalculationScreen> {
 
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                  icon:  Icon(Icons.arrow_back, color: AppColors.primaryLight),
                   onPressed: () => Navigator.pop(context),
                 ),
-                const AppText(
+                AppText(
                   text: 'New Wallet',
                   size: "xxlarge",
-                  color: AppColors.white,
+                  color: AppColors.primaryLight,
                   isBold: true,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.percent_rounded, color: AppColors.white),
+                  icon:  Icon(Icons.percent_rounded, color: AppColors.primaryLight),
                   onPressed: () async {
                     await Navigator.pushNamed(context, '/allocations');
                     await _loadAllocators();
@@ -196,16 +196,16 @@ class _CalculationScreenState extends State<CalculationScreen> {
             mantissaLength: 0, // no decimal places for salary
           ),
         ],
-        cursorColor: AppColors.white,
-        style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 25),
-        decoration: const InputDecoration(
+        cursorColor: AppColors.primaryLight,
+        style:  TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold, fontSize: 25),
+        decoration:  InputDecoration(
           labelText: 'Input Salary',
-          labelStyle: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+          labelStyle: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.white),
+            borderSide: BorderSide(color: AppColors.primaryLight),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.white, width: 3),
+            borderSide: BorderSide(color: AppColors.primaryLight, width: 3),
           ),
         ),
       );
@@ -220,12 +220,12 @@ class _CalculationScreenState extends State<CalculationScreen> {
                 style: ElevatedButton.styleFrom(
                   elevation: 2,
                   backgroundColor: AppColors.purple,
-                  foregroundColor: AppColors.white,
+                  foregroundColor: AppColors.primaryLight,
                 ),
-                child: const AppText(
+                child: AppText(
                   text: 'Add',
                   size: "large",
-                  color: AppColors.white,
+                  color: AppColors.textButton,
                   isBold: true,
                   isCenter: true,
                 ),
@@ -247,12 +247,12 @@ class FuturisticBackground extends StatelessWidget {
           center: Alignment(-0.5, -0.2),
           radius: 1.9,
           colors: [
-            AppColors.black,
-            AppColors.darkpurple
+            AppColors.primaryDark,
+            // AppColors.darkpurple
           ],
           stops: [
             0.0,
-            1.0
+            // 1.0
           ],
         ),
       ),

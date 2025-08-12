@@ -62,7 +62,7 @@ class StorageService {
     prefs.setString(_budgetsKey, jsonEncode(decoded));
   }
 
-  Future<void> updateBudget(
+  Future<void> saveTransaction(
   Budget budget,
   String category,
   double change, {

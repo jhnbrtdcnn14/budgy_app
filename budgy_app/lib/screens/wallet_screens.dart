@@ -42,17 +42,17 @@ class _WalletScreenState extends State<WalletScreen> {
     return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.white,
-        title: const AppText(
+        backgroundColor: AppColors.primaryLight,
+        title: AppText(
           text: 'Delete Wallet',
           size: 'medium',
           color: AppColors.purple,
           isBold: true,
         ),
-        content: const AppText(
+        content: AppText(
           text: 'Are you sure you want to delete this wallet?',
           size: 'medium',
-          color: AppColors.darkgrey,
+          color: AppColors.primaryDark,
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
@@ -69,15 +69,15 @@ class _WalletScreenState extends State<WalletScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: AppText(text: category, size: 'small', color: AppColors.lightpurple),
+          child: AppText(text: category, size: 'small', color: AppColors.secondaryLight),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: AppText(text: '$percentage%', size: 'small', color: AppColors.lightpurple),
+          child: AppText(text: '$percentage%', size: 'small', color: AppColors.secondaryLight),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
-          child: AppText(text: '₱$amount', size: 'small', color: AppColors.white),
+          child: AppText(text: '₱$amount', size: 'small', color: AppColors.secondaryLight),
         ),
       ],
     );
@@ -89,7 +89,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.white.withOpacity(0.1),
+        backgroundColor: AppColors.primaryLight.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 0,
         padding: EdgeInsets.zero, // Remove default padding to match Card layout
@@ -110,7 +110,7 @@ class _WalletScreenState extends State<WalletScreen> {
           title: AppText(
             text: '₱$formattedSalary',
             size: "large",
-            color: AppColors.white,
+            color: AppColors.primaryLight,
             isBold: true,
           ),
           subtitle: Column(
@@ -118,7 +118,7 @@ class _WalletScreenState extends State<WalletScreen> {
             children: [
               Text(
                 'Date: $formattedDate',
-                style: const TextStyle(fontSize: 12, color: AppColors.lightpurple),
+                style:  TextStyle(fontSize: 12, color: AppColors.secondaryLight),
               ),
               const SizedBox(height: 8),
               Table(
@@ -136,7 +136,7 @@ class _WalletScreenState extends State<WalletScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.delete, color: AppColors.white),
+                icon:  Icon(Icons.delete, color: AppColors.primaryLight),
                 onPressed: () async {
                   final confirm = await _showConfirmDeleteDialog();
                   if (confirm == true) {
@@ -171,7 +171,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   if (!_budgets.isEmpty)
                     Column(
                       children: [
-                        AppText(text: 'Wallet', size: 'medium', color: AppColors.white),
+                        AppText(text: 'Wallet', size: 'medium', color: AppColors.primaryLight),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -183,7 +183,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox.square(
-                                  dimension: screenHeight * 0.40,
+                                  dimension: screenHeight * 0.30,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.0),
@@ -200,9 +200,12 @@ class _WalletScreenState extends State<WalletScreen> {
                                 AppText(
                                   text: 'Hit the add button and create your wallet today!',
                                   size: "medium",
-                                  color: AppColors.white,
+                                  color: AppColors.primaryLight,
                                   isCenter: true,
                                 ),
+                                SizedBox(
+                                  height: 200,
+                                )
                               ],
                             ),
                           )
@@ -226,7 +229,7 @@ class _WalletScreenState extends State<WalletScreen> {
               backgroundColor: AppColors.purple,
               child: Icon(
                 Icons.add,
-                color: AppColors.white,
+                color: AppColors.textButton,
               ),
             ),
           )
@@ -238,18 +241,24 @@ class _WalletScreenState extends State<WalletScreen> {
   Widget _buildAppBar() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const AppText(
+          AppText(
             text: 'Budgy',
             size: "xxxlarge",
-            color: AppColors.white,
+            color: AppColors.primaryLight,
             isBold: true,
           ),
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.bar_chart_rounded, color: AppColors.white),
+                icon:  Icon(Icons.bar_chart_rounded, color: AppColors.primaryLight),
                 onPressed: () {
                   Navigator.pushNamed(context, '/statistic');
+                },
+              ),
+               IconButton(
+                icon:  Icon(Icons.settings_rounded, color: AppColors.primaryLight),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/settings');
                 },
               ),
             ],

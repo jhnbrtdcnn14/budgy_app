@@ -79,19 +79,27 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.arrow_back_rounded, color: AppColors.primaryLight),
+                            onPressed: () {
+                              Navigator.pop(context, '/wallet');
+                            },
+                          ),
+                        ],
+                      ),
                       AppText(
                         text: 'Statistics',
                         size: "xxlarge",
-                        color: AppColors.white,
+                        color: AppColors.primaryLight,
                         isBold: true,
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
+                      SizedBox.square(
+                        dimension: 30,
+                      )
                     ],
                   ),
-
                   const SizedBox(height: 20),
 
                   // Oldest date indicator
@@ -101,7 +109,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       child: AppText(
                         text: 'Summary from ${DateFormat.yMMMMd().format(_oldestDate!)} to present',
                         size: "small",
-                        color: AppColors.white,
+                        color: AppColors.primaryLight,
                         isBold: true,
                       ),
                     ),
@@ -115,7 +123,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox.square(
-                                  dimension: screenHeight * 0.40,
+                                  dimension: screenHeight * 0.30,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10.0),
@@ -132,9 +140,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 AppText(
                                   text: 'Here’s where you can view all your accumulated amounts by allocation.',
                                   size: "medium",
-                                  color: AppColors.white,
+                                  color: AppColors.primaryLight,
                                   isCenter: true,
                                 ),
+                                SizedBox(
+                                  height: 200,
+                                )
                               ],
                             ),
                           )
@@ -188,7 +199,7 @@ class _AllocatorBar extends StatelessWidget {
         AppText(
           text: name,
           size: "large",
-          color: AppColors.white,
+          color: AppColors.primaryLight,
           isBold: true,
         ),
         const SizedBox(height: 4),
@@ -197,7 +208,7 @@ class _AllocatorBar extends StatelessWidget {
             Container(
               height: barHeight,
               decoration: BoxDecoration(
-                color: AppColors.white.withOpacity(0.2),
+                color: AppColors.tertiaryLight,
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -206,7 +217,7 @@ class _AllocatorBar extends StatelessWidget {
               height: barHeight,
               width: MediaQuery.of(context).size.width * percent,
               decoration: BoxDecoration(
-                color: AppColors.purple.withOpacity(0.8),
+                color: AppColors.purple.withOpacity(0.85),
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -215,7 +226,7 @@ class _AllocatorBar extends StatelessWidget {
                 child: AppText(
                   text: formatter.format(amount),
                   size: "medium",
-                  color: AppColors.white,
+                  color: AppColors.primaryLight,
                   isBold: true,
                 ),
               ),

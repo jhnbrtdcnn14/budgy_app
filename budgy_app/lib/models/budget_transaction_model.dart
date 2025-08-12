@@ -1,4 +1,3 @@
-
 class TransactionEntry {
   final String id; // Unique transaction ID
   final String category; // e.g. "Savings", "Wants"
@@ -9,12 +8,18 @@ class TransactionEntry {
 
   TransactionEntry({
     required this.id,
-    required this.category,
+    required String category,
     required this.amount,
-    required this.label,
+    required String label,
     required this.date,
     required this.type,
-  });
+  })  : category = _capitalize(category),
+        label = _capitalize(label);
+
+  static String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text.split(' ').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,

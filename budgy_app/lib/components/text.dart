@@ -11,7 +11,7 @@ class AppText extends StatelessWidget {
   final bool isUpper;
   final TextOverflow? overflow;
 
-  const AppText({
+  AppText({
     super.key,
     required this.text,
     required this.size,

@@ -94,8 +94,8 @@ class _AllocationScreenState extends State<AllocationScreen> {
       final proceed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: AppColors.white,
-          title: const AppText(
+          backgroundColor: AppColors.primaryLight,
+          title: AppText(
             text: 'Total is not 100%',
             size: 'medium',
             color: AppColors.red,
@@ -104,7 +104,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
           content: AppText(
             text: 'Current total is ${total.toStringAsFixed(1)}%.',
             size: 'small',
-            color: AppColors.darkgrey,
+            color: AppColors.primaryDark,
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
@@ -117,14 +117,14 @@ class _AllocationScreenState extends State<AllocationScreen> {
     await _storageService.saveAllocators(_allocators);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
       content: AppText(
         text: 'Allocations saved!',
         size: "medium",
         color: AppColors.purple,
         isBold: true,
       ),
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primaryLight,
     ));
     Navigator.pop(context);
   }
@@ -133,8 +133,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: AppColors.white.withOpacity(0.2),
-      elevation: 0,
+      color: AppColors.tertiaryLight,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -143,11 +142,11 @@ class _AllocationScreenState extends State<AllocationScreen> {
               flex: 3,
               child: TextField(
                 controller: _nameControllers[index],
-                style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                style:  TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
                   labelText: 'Name',
-                  labelStyle: TextStyle(color: AppColors.white),
+                  labelStyle: TextStyle(color: AppColors.primaryLight),
                 ),
               ),
             ),
@@ -157,18 +156,18 @@ class _AllocationScreenState extends State<AllocationScreen> {
               child: TextField(
                 controller: _percentControllers[index],
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(borderSide: BorderSide.none),
                   labelText: 'Percentage',
-                  labelStyle: TextStyle(color: AppColors.white),
+                  labelStyle: TextStyle(color: AppColors.primaryLight),
                   suffixText: '%',
-                  suffixStyle: TextStyle(color: AppColors.white),
+                  suffixStyle: TextStyle(color: AppColors.primaryLight),
                 ),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.delete, color: AppColors.red),
+              icon: Icon(Icons.delete, color: AppColors.red),
               onPressed: () => _removeAllocator(index),
             ),
           ],
@@ -179,8 +178,8 @@ class _AllocationScreenState extends State<AllocationScreen> {
 
   Widget _buildTotalDisplay(double total) {
     final isValid = total == 100;
-    final fillColor = isValid ? AppColors.white.withOpacity(0.1) : AppColors.red;
-    final backgroundColor = AppColors.white.withOpacity(0.2);
+    final fillColor = isValid ? AppColors.primaryLight.withOpacity(0.1) : AppColors.red;
+    final backgroundColor = AppColors.tertiaryLight;
 
     return Container(
       width: double.infinity,
@@ -207,7 +206,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
             child: AppText(
               text: 'Total: ${total.toStringAsFixed(0)}%',
               size: "medium",
-              color: AppColors.white,
+              color: AppColors.primaryLight,
               isBold: true,
             ),
           ),
@@ -240,16 +239,16 @@ class _AllocationScreenState extends State<AllocationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                              icon:  Icon(Icons.arrow_back, color: AppColors.primaryLight),
                               onPressed: () => Navigator.pop(context),
                             ),
-                            const AppText(
+                            AppText(
                               text: 'Allocations',
                               size: "xxlarge",
-                              color: AppColors.white,
+                              color: AppColors.primaryLight,
                               isBold: true,
                             ),
-                            IconButton(icon: const Icon(Icons.add, color: AppColors.white), onPressed: _addAllocator),
+                            IconButton(icon:  Icon(Icons.add, color: AppColors.primaryLight), onPressed: _addAllocator),
                           ],
                         ),
                       ),
@@ -278,12 +277,12 @@ class _AllocationScreenState extends State<AllocationScreen> {
                             style: ElevatedButton.styleFrom(
                               elevation: 2,
                               backgroundColor: AppColors.purple,
-                              foregroundColor: AppColors.white,
+                              foregroundColor: AppColors.primaryLight,
                             ),
-                            child: const AppText(
+                            child: AppText(
                               text: 'Save',
                               size: "large",
-                              color: AppColors.white,
+                              color: AppColors.textButton,
                               isBold: true,
                               isCenter: true,
                             ),

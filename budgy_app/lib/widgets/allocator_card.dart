@@ -19,24 +19,23 @@ class AllocatorCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      color: AppColors.white.withOpacity(0.2),
-      elevation: 2,
+      color: AppColors.tertiaryLight,
       child: ListTile(
         title: AppText(
           text: allocator.name,
           size: "medium",
-          color: AppColors.white,
+          color: AppColors.primaryLight,
           isBold: true,
         ),
         subtitle: AppText(
           text: '${allocator.percentage.toStringAsFixed(0)}%',
           size: "small",
-          color: AppColors.lightpurple,
+          color: AppColors.secondaryLight,
         ),
         trailing: AppText(
           text: '₱$formattedAmount',
           size: "large",
-          color: AppColors.white,
+          color: AppColors.primaryLight,
           isBold: true,
         ),
       ),

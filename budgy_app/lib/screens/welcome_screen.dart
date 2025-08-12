@@ -23,7 +23,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.primaryLight,
       body: Stack(children: [
         const FuturisticBackground(),
         UpperLeftCircularBlur(),
@@ -39,7 +39,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               children: [
                 Expanded(child: Container()),
                 SizedBox.square(
-                  dimension: screenHeight * 0.40,
+                  dimension: screenHeight * 0.30,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
@@ -53,7 +53,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                AppText(text: 'Your money, your rules', size: 'large', color: AppColors.white),
+                AppText(text: 'Your money, your rules', size: 'large', color: AppColors.primaryLight),
                 const SizedBox(
                   height: 10,
                 ),
@@ -72,12 +72,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                             style: ElevatedButton.styleFrom(
                               elevation: 2,
                               backgroundColor: AppColors.purple,
-                              foregroundColor: AppColors.white,
+                              foregroundColor: AppColors.primaryLight,
                             ),
-                            child: const AppText(
+                            child: AppText(
                               text: 'Start',
                               size: "large",
-                              color: AppColors.white,
+                              color: AppColors.textButton,
                               isBold: true,
                               isCenter: true,
                             ),
@@ -107,13 +107,13 @@ class LowerRightCircularBlur extends StatelessWidget {
       child: Container(
         width: 300,
         height: 300,
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
             center: Alignment(0.5, 0.9),
             radius: 1.2,
             colors: [
-              AppColors.black,
+              AppColors.primaryDark,
               AppColors.darkpurple,
             ],
             stops: [
@@ -138,13 +138,13 @@ class UpperLeftCircularBlur extends StatelessWidget {
       child: Container(
         width: 300,
         height: 300,
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
           shape: BoxShape.circle,
           gradient: RadialGradient(
             center: Alignment(-0.5, -0.8),
             radius: 1.2,
             colors: [
-              AppColors.black,
+              AppColors.primaryDark,
               AppColors.darkpurple,
             ],
             stops: [
