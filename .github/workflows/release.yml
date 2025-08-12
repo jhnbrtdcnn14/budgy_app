@@ -32,24 +32,34 @@ jobs:
           echo "TAG=$SAFE_TAG" >> $GITHUB_ENV
           echo "RAW_VERSION=$RAW_VERSION" >> $GITHUB_ENV
           echo "Version from pubspec.yaml: $RAW_VERSION (tag: $SAFE_TAG)"
+        working-directory: ./budgy_app
 
       # Prepare project
       - name: Clean project
         run: flutter clean
+        working-directory: ./budgy_app
+
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./budgy_app
+
       - name: Format Dart files
         run: dart format --set-exit-if-changed . || true
+        working-directory: ./budgy_app
+
       - name: Analyze source
         run: flutter analyze
+        working-directory: ./budgy_app
 
       # Build APK
       - name: Build release APK
         run: flutter build apk --release
+        working-directory: ./budgy_app
 
       # Rename APK for release
       - name: Rename APK
         run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/budgy.apk
+        working-directory: ./budgy_app
 
       # Create GitHub Release
       - name: Create Release
@@ -68,7 +78,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/app/outputs/flutter-apk/budgy.apk
+          asset_path: budgy_app/build/app/outputs/flutter-apk/budgy.apk
           asset_name: budgy.apk
           asset_content_type: application/vnd.android.package-archive
         env:
