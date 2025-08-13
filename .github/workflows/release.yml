@@ -43,9 +43,20 @@ jobs:
         run: flutter analyze
         working-directory: ./budgy_app
 
-      # Build APK for Android
+      # Build APK for Android (with missing rules output if fails)
       - name: Build Android APK
-        run: flutter build apk --release
+        run: |
+          set -e
+          if ! flutter build apk --release; then
+            echo "------ R8 Missing Rules Output ------"
+            MISSING_RULES_FILE="budgy_app/build/app/outputs/mapping/release/missing_rules.txt"
+            if [ -f "$MISSING_RULES_FILE" ]; then
+              cat "$MISSING_RULES_FILE"
+            else
+              echo "No missing_rules.txt file found."
+            fi
+            exit 1
+          fi
         working-directory: ./budgy_app
 
       # Delete existing release if it exists
