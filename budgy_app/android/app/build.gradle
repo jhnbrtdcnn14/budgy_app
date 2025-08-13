@@ -35,10 +35,19 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
-        }
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+}
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Fix for R8 missing annotations
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.errorprone:error_prone_annotations:2.21.1'
 }
