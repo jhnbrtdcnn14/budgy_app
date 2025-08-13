@@ -28,7 +28,7 @@ class AllocatorCard extends StatelessWidget {
           isBold: true,
         ),
         subtitle: AppText(
-          text: '${allocator.percentage.toStringAsFixed(0)}%',
+          text: '${allocator.value.toStringAsFixed(0)}%',
           size: "small",
           color: AppColors.secondaryLight,
         ),

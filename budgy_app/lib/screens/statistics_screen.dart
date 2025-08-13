@@ -1,4 +1,4 @@
-import 'package:budgy_app/screens/calculation_screen.dart';
+import 'package:budgy_app/screens/create_wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -16,9 +16,15 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> {
   final StorageService _storageService = StorageService();
 
+  // Percentage wallets
   Map<String, double> _totalsByAllocator = {};
-  DateTime? _oldestDate;
   double _grandTotal = 0;
+
+  // Custom wallets
+  Map<String, double> _customTotalsByAllocator = {};
+  double _customGrandTotal = 0;
+
+  DateTime? _oldestDate;
 
   @override
   void initState() {
@@ -27,43 +33,52 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Future<void> _loadAndProcessData() async {
-    final budgets = await _storageService.loadBudgets();
-    if (budgets.isEmpty) {
+    final wallets = await _storageService.loadWallets();
+    if (wallets.isEmpty) {
       setState(() {
         _totalsByAllocator = {};
+        _customTotalsByAllocator = {};
         _oldestDate = null;
         _grandTotal = 0;
+        _customGrandTotal = 0;
       });
       return;
     }
 
     // Find oldest date
-    budgets.sort((a, b) => a.date.compareTo(b.date));
-    _oldestDate = budgets.first.date;
+    wallets.sort((a, b) => a.date.compareTo(b.date));
+    _oldestDate = wallets.first.date;
 
-    // Sum allocations per allocator name
-    final Map<String, double> totals = {};
-    for (var budget in budgets) {
-      budget.allocation.forEach((name, data) {
-        final amount = (data['amount'] ?? 0).toDouble();
-        totals[name] = (totals[name] ?? 0) + amount;
+    // Separate totals
+    final Map<String, double> percentTotals = {};
+    final Map<String, double> customTotals = {};
+
+    for (var wallet in wallets) {
+      wallet.allocation.forEach((name, value) {
+        final amount = value is Map ? (value['amount'] ?? 0).toDouble() : (value ?? 0).toDouble();
+
+        if (wallet.isCustom) {
+          customTotals[name] = (customTotals[name] ?? 0) + amount;
+        } else {
+          percentTotals[name] = (percentTotals[name] ?? 0) + amount;
+        }
       });
     }
 
-    // Compute grand total
-    final grandTotal = totals.values.fold<double>(0, (sum, v) => sum + v);
+    final percentGrandTotal = percentTotals.values.fold<double>(0, (sum, v) => sum + v);
+    final customGrandTotal = customTotals.values.fold<double>(0, (sum, v) => sum + v);
 
     setState(() {
-      _totalsByAllocator = totals;
-      _oldestDate = _oldestDate;
-      _grandTotal = grandTotal;
+      _totalsByAllocator = percentTotals;
+      _customTotalsByAllocator = customTotals;
+      _grandTotal = percentGrandTotal;
+      _customGrandTotal = customGrandTotal;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 0);
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -108,64 +123,65 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: AppText(
                         text: 'Summary from ${DateFormat.yMMMMd().format(_oldestDate!)} to present',
-                        size: "small",
+                        size: "xsmall",
                         color: AppColors.primaryLight,
-                        isBold: true,
                       ),
                     ),
 
                   // Body content
                   Expanded(
-                    child: _totalsByAllocator.isEmpty
-                        ? Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox.square(
-                                  dimension: screenHeight * 0.30,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      child: Image.asset(
-                                        'icons/statistics.png',
-                                        fit: BoxFit.cover, // This makes the image fit the container
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                AppText(
-                                  text: 'Here’s where you can view all your accumulated amounts by allocation.',
-                                  size: "medium",
-                                  color: AppColors.primaryLight,
-                                  isCenter: true,
-                                ),
-                                SizedBox(
-                                  height: 200,
-                                )
-                              ],
-                            ),
-                          )
-                        : ListView.separated(
-                            itemCount: _totalsByAllocator.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 16),
-                            itemBuilder: (context, index) {
-                              final name = _totalsByAllocator.keys.elementAt(index);
-                              final amount = _totalsByAllocator[name]!;
-                              final percent = (_grandTotal == 0) ? 0.0 : (amount / _grandTotal).clamp(0.0, 1.0);
-
-                              return _AllocatorBar(
-                                name: name,
-                                amount: amount,
+                    child: ListView(
+                      children: [
+                        if (_totalsByAllocator.isNotEmpty) ...[
+                          AppText(
+                            text: "Percentage Wallets",
+                            size: "large",
+                            color: AppColors.primaryLight,
+                            isBold: true,
+                          ),
+                          const SizedBox(height: 8),
+                          ..._totalsByAllocator.entries.map((entry) {
+                            final percent = (_grandTotal == 0) ? 0.0 : (entry.value / _grandTotal).clamp(0.0, 1.0);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: _AllocatorBar(
+                                name: entry.key,
+                                amount: entry.value,
                                 percent: percent,
                                 formatter: formatter,
-                              );
-                            },
+                              ),
+                            );
+                          }),
+                          const SizedBox(height: 20),
+                        ],
+                        if (_customTotalsByAllocator.isNotEmpty) ...[
+                          Divider(
+                            color: AppColors.tertiaryLight,
                           ),
-                  ),
+                          const SizedBox(height: 20),
+                          AppText(
+                            text: "Custom Wallets",
+                            size: "large",
+                            color: AppColors.primaryLight,
+                            isBold: true,
+                          ),
+                          const SizedBox(height: 8),
+                          ..._customTotalsByAllocator.entries.map((entry) {
+                            final percent = (_customGrandTotal == 0) ? 0.0 : (entry.value / _customGrandTotal).clamp(0.0, 1.0);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: _AllocatorBar(
+                                name: entry.key,
+                                amount: entry.value,
+                                percent: percent,
+                                formatter: formatter,
+                              ),
+                            );
+                          }),
+                        ],
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
@@ -198,8 +214,8 @@ class _AllocatorBar extends StatelessWidget {
       children: [
         AppText(
           text: name,
-          size: "large",
-          color: AppColors.primaryLight,
+          size: "small",
+          color: AppColors.secondaryLight,
           isBold: true,
         ),
         const SizedBox(height: 4),

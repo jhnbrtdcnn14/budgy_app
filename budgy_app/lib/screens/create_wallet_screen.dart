@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:intl/intl.dart';
 import '../models/allocator_model.dart';
-import '../models/budget_model.dart';
+import '../models/wallet_model.dart';
 import '../services/storage_service.dart';
 
-class CalculationScreen extends StatefulWidget {
-  const CalculationScreen({super.key});
+class CreateWalletScreen extends StatefulWidget {
+  const CreateWalletScreen({super.key});
 
   @override
-  State<CalculationScreen> createState() => _CalculationScreenState();
+  State<CreateWalletScreen> createState() => _CreateWalletScreenState();
 }
 
-class _CalculationScreenState extends State<CalculationScreen> {
+class _CreateWalletScreenState extends State<CreateWalletScreen> {
   final StorageService _storageService = StorageService();
   List<Allocator> _allocators = [];
   final TextEditingController _salaryController = TextEditingController();
@@ -38,7 +38,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
     setState(() => _allocators = list);
   }
 
-  double _amountFor(double salary, double percentage) => salary * percentage / 100;
+  double _amountFor(double salary, double value) => salary * value / 100;
 
   double? _parseSalary() {
     String rawText = _salaryController.text;
@@ -63,7 +63,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
     );
   }
 
-  Future<void> _saveBudget() async {
+  Future<void> _saveWallet() async {
     final salary = _parseSalary();
     if (salary == null) {
       _showSnackBar('Please enter a valid salary', AppColors.red);
@@ -73,19 +73,19 @@ class _CalculationScreenState extends State<CalculationScreen> {
     final allocationMap = {
       for (var a in _allocators)
         a.name: {
-          'percentage': a.percentage,
-          'amount': _amountFor(salary, a.percentage),
+          'value': a.value,
+          'amount': _amountFor(salary, a.value),
         }
     };
 
-    final budget = Budget(
+    final wallet = Wallet(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       salary: salary,
       allocation: allocationMap,
       date: DateTime.now(),
     );
 
-    await _storageService.saveBudget(budget);
+    await _storageService.saveWallet(wallet);
 
     _showSnackBar('Wallet saved!', AppColors.purple);
 
@@ -104,7 +104,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
   }
 
   String _formattedAmount(double salary, Allocator allocator) {
-    final amt = _amountFor(salary, allocator.percentage);
+    final amt = _amountFor(salary, allocator.value);
     return _formatter.format(amt);
   }
 
@@ -120,8 +120,12 @@ class _CalculationScreenState extends State<CalculationScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTopBar(),
+                  const SizedBox(height: 20),
+                  AppText(text: "Set your total amount and allocate by percentages.\nBudget adjust automatically when your amount changes." "", size: 'xsmall', color: AppColors.secondaryLight),
                   const SizedBox(height: 20),
                   _buildSalaryInput(),
                   const SizedBox(height: 20),
@@ -160,17 +164,17 @@ class _CalculationScreenState extends State<CalculationScreen> {
 
               children: [
                 IconButton(
-                  icon:  Icon(Icons.arrow_back, color: AppColors.primaryLight),
+                  icon: Icon(Icons.arrow_back, color: AppColors.primaryLight),
                   onPressed: () => Navigator.pop(context),
                 ),
                 AppText(
-                  text: 'New Wallet',
-                  size: "xxlarge",
+                  text: 'Percentage Wallet',
+                  size: "xlarge",
                   color: AppColors.primaryLight,
                   isBold: true,
                 ),
                 IconButton(
-                  icon:  Icon(Icons.percent_rounded, color: AppColors.primaryLight),
+                  icon: Icon(Icons.edit, color: AppColors.primaryLight),
                   onPressed: () async {
                     await Navigator.pushNamed(context, '/allocations');
                     await _loadAllocators();
@@ -197,9 +201,9 @@ class _CalculationScreenState extends State<CalculationScreen> {
           ),
         ],
         cursorColor: AppColors.primaryLight,
-        style:  TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold, fontSize: 25),
-        decoration:  InputDecoration(
-          labelText: 'Input Salary',
+        style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold, fontSize: 25),
+        decoration: InputDecoration(
+          labelText: 'Input Amount',
           labelStyle: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.primaryLight),
@@ -216,14 +220,14 @@ class _CalculationScreenState extends State<CalculationScreen> {
             child: SizedBox(
               height: 50,
               child: ElevatedButton(
-                onPressed: _saveBudget,
+                onPressed: _saveWallet,
                 style: ElevatedButton.styleFrom(
                   elevation: 2,
                   backgroundColor: AppColors.purple,
                   foregroundColor: AppColors.primaryLight,
                 ),
                 child: AppText(
-                  text: 'Add',
+                  text: 'Create',
                   size: "large",
                   color: AppColors.textButton,
                   isBold: true,

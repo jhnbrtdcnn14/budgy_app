@@ -1,6 +1,6 @@
 import 'package:budgy_app/components/text.dart';
 import 'package:budgy_app/provider.dart/theme_notifier.dart';
-import 'package:budgy_app/screens/calculation_screen.dart';
+import 'package:budgy_app/screens/create_wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../components/colors.dart';

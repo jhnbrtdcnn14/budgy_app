@@ -1,25 +1,25 @@
 class Allocator {
   final String name;
-  final double percentage;
+  final double value;
 
-  Allocator({required String name, required this.percentage}) : name = _capitalizeWords(name);
+  Allocator({required String name, required this.value}) : name = _capitalizeWords(name);
 
-  Allocator copyWith({String? name, double? percentage}) {
+  Allocator copyWith({String? name, double? value}) {
     return Allocator(
       name: name ?? this.name,
-      percentage: percentage ?? this.percentage,
+      value: value ?? this.value,
     );
   }
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'percentage': percentage,
+        'value': value,
       };
 
   factory Allocator.fromJson(Map<String, dynamic> json) {
     return Allocator(
       name: json['name'],
-      percentage: (json['percentage'] as num).toDouble(),
+      value: (json['value'] as num).toDouble(),
     );
   }
 

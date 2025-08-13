@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../components/text.dart';
-import 'calculation_screen.dart'; // for FuturisticBackground
+import 'create_wallet_screen.dart'; // for FuturisticBackground
 import '../models/allocator_model.dart';
 import '../services/storage_service.dart';
 
@@ -46,7 +46,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
     _disposeControllers();
     for (final alloc in _allocators) {
       _nameControllers.add(TextEditingController(text: alloc.name));
-      _percentControllers.add(TextEditingController(text: alloc.percentage.toString()));
+      _percentControllers.add(TextEditingController(text: alloc.value.toString()));
     }
   }
 
@@ -61,10 +61,10 @@ class _AllocationScreenState extends State<AllocationScreen> {
 
   void _addAllocator() {
     setState(() {
-      final newAlloc = Allocator(name: 'New', percentage: 0);
+      final newAlloc = Allocator(name: 'New', value: 0);
       _allocators.add(newAlloc);
       _nameControllers.add(TextEditingController(text: newAlloc.name));
-      _percentControllers.add(TextEditingController(text: newAlloc.percentage.toString()));
+      _percentControllers.add(TextEditingController(text: newAlloc.value.toString()));
     });
   }
 
@@ -84,11 +84,11 @@ class _AllocationScreenState extends State<AllocationScreen> {
       final pct = double.tryParse(_percentControllers[i].text) ?? 0;
       _allocators[i] = _allocators[i].copyWith(
         name: name.isEmpty ? 'Unnamed' : name,
-        percentage: pct,
+        value: pct,
       );
     }
 
-    final total = _allocators.fold<double>(0, (sum, a) => sum + a.percentage);
+    final total = _allocators.fold<double>(0, (sum, a) => sum + a.value);
 
     if (total != 100.0) {
       final proceed = await showDialog<bool>(
@@ -159,7 +159,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
                 style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(borderSide: BorderSide.none),
-                  labelText: 'Percentage',
+                  labelText: 'value',
                   labelStyle: TextStyle(color: AppColors.primaryLight),
                   suffixText: '%',
                   suffixStyle: TextStyle(color: AppColors.primaryLight),
@@ -219,7 +219,7 @@ class _AllocationScreenState extends State<AllocationScreen> {
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
-    final total = _allocators.fold<double>(0, (sum, a) => sum + a.percentage);
+    final total = _allocators.fold<double>(0, (sum, a) => sum + a.value);
 
     return Scaffold(
       body: Stack(
