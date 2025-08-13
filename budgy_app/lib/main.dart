@@ -1,13 +1,14 @@
 import 'package:budgy_app/components/colors.dart';
 import 'package:budgy_app/provider.dart/theme_notifier.dart';
 import 'package:budgy_app/screens/allocation_screen.dart';
+import 'package:budgy_app/screens/custom_wallet_screen.dart';
 import 'package:budgy_app/screens/setting_screen.dart';
 import 'package:budgy_app/screens/wallet_screens.dart';
 import 'package:budgy_app/screens/statistics_screen.dart';
 import 'package:budgy_app/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'screens/calculation_screen.dart';
+import 'screens/create_wallet_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: BudgetApp()));
@@ -35,9 +36,10 @@ class BudgetApp extends ConsumerWidget {
       initialRoute: '/welcome',
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
-        '/calculation': (context) => const CalculationScreen(),
+        '/create_wallet': (context) => const CreateWalletScreen(),
         '/allocations': (context) => const AllocationScreen(),
         '/wallet': (context) => const WalletScreen(),
+        '/custom_wallet': (context) => CustomWalletAmountScreen(),
         '/statistic': (context) => const StatisticsScreen(),
         '/settings': (context) => const SettingsScreen(),
       },

@@ -1,14 +1,14 @@
 import 'package:budgy_app/models/budget_transaction_model.dart';
-import 'package:budgy_app/screens/calculation_screen.dart';
+import 'package:budgy_app/screens/create_wallet_screen.dart';
 import 'package:flutter/material.dart';
 import '../components/colors.dart';
 import '../components/text.dart';
-import '../models/budget_model.dart';
+import '../models/wallet_model.dart';
 import '../services/storage_service.dart';
 import 'package:intl/intl.dart';
 
 class BudgetScreen extends StatefulWidget {
-  final Budget budget;
+  final Wallet budget;
   const BudgetScreen({super.key, required this.budget});
 
   @override
@@ -103,7 +103,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 ))
                             .toList(),
                         onChanged: (value) => setState(() => _selectedAllocator = value),
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Select Category",
                           labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
@@ -111,7 +111,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       const SizedBox(height: 10),
                       TextField(
                         controller: _labelController,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Label",
                           labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
@@ -120,7 +120,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       TextField(
                         controller: _controller,
                         keyboardType: TextInputType.number,
-                        decoration:  InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Amount",
                           labelStyle: TextStyle(color: AppColors.primaryLight),
                         ),
@@ -139,7 +139,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                 _isAddition = index == 0;
                               });
                             },
-                            children:  [
+                            children: [
                               Padding(
                                 padding: EdgeInsets.all(8),
                                 child: AppText(
@@ -226,7 +226,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       return widget.budget.transactions.any((t) => t.category == category);
                     }).map((entry) {
                       final category = entry.key;
-                      final baseAmount = (entry.value['amount'] ?? 0).toDouble();
+                      final baseAmount = (entry.value is Map) ? ((entry.value['amount'] ?? 0) as num).toDouble() : (entry.value as num).toDouble();
 
                       final List<TransactionEntry> transactions = widget.budget.transactions.where((t) => t.category == category).toList();
 
@@ -338,7 +338,11 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                                 height: 30,
                                                 width: constraints.maxWidth * percent,
                                                 decoration: BoxDecoration(
-                                                  color: expenseAmount > baseAmount ? AppColors.red : AppColors.purple.withOpacity(0.8),
+                                                  color: standingAmount > baseAmount
+                                                      ? AppColors.green
+                                                      : expenseAmount > baseAmount
+                                                          ? AppColors.red
+                                                          : AppColors.purple.withOpacity(0.8),
                                                   borderRadius: BorderRadius.circular(8),
                                                 ),
                                               );
@@ -358,12 +362,21 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                       const SizedBox(height: 12),
                                     ],
                                   ),
+                                if (standingAmount > baseAmount)
+                                  Divider(
+                                    color: AppColors.green,
+                                    thickness: 5,
+                                  ),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     AppText(
-                                      text: expenseAmount > baseAmount ? "You have overspent" : "Remaining Balance",
+                                      text: standingAmount > baseAmount
+                                          ? "Accumulated Amount"
+                                          : expenseAmount > baseAmount
+                                              ? "You have overspent"
+                                              : "Remaining Balance",
                                       size: "small",
                                       color: AppColors.primaryLight,
                                     ),
@@ -394,8 +407,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Widget _buildTopBar() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-           IconButton(
-            icon:  Icon(Icons.arrow_back, color: AppColors.primaryLight),
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: AppColors.primaryLight),
             onPressed: () => Navigator.pop(context),
           ),
           AppText(
@@ -404,10 +417,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
             color: AppColors.primaryLight,
             isBold: true,
           ),
-         
-           SizedBox.square(
-                        dimension: 30,
-                      )
+          SizedBox.square(
+            dimension: 30,
+          )
         ],
       );
 
@@ -443,104 +455,4 @@ class _BudgetScreenState extends State<BudgetScreen> {
       _labelController.clear();
     });
   }
-
-  // Widget buildExpenseBars() {
-  //   if (expensesPerCategory.isEmpty) {
-  //     return const Center(
-  //       child: AppText(text: 'No expense data', size: 'medium', color: AppColors.primaryLight),
-  //     );
-  //   }
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: expensesPerCategory.entries.map((entry) {
-  //       final category = entry.key;
-  //       final expenseAmount = entry.value;
-  //       final allocationAmount = (widget.budget.allocation[category]?['amount'] ?? 0).toDouble();
-
-  //       // If allocationAmount is 0, avoid division by zero and just show empty bar
-  //       final percent = allocationAmount > 0 ? (expenseAmount / allocationAmount).clamp(0.0, 1.0) : 0.0;
-
-  //       return Padding(
-  //         padding: const EdgeInsets.symmetric(vertical: 6),
-  //         child: _AllocatorBar(
-  //           name: category,
-  //           amount: expenseAmount,
-  //           percent: percent,
-  //           allocationAmount: allocationAmount,
-  //           formatter: NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 2),
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
 }
-
-// // Reuse this from your StatisticsScreen (or adjust to your needs)
-// class _AllocatorBar extends StatelessWidget {
-//   final String name;
-//   final double amount; // expense amount
-//   final double percent; // fraction of bar fill based on allocation
-//   final double allocationAmount; // total allocated amount for the category
-//   final NumberFormat formatter;
-
-//   const _AllocatorBar({
-//     Key? key,
-//     required this.name,
-//     required this.amount,
-//     required this.percent,
-//     required this.allocationAmount,
-//     required this.formatter,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final barHeight = 24.0;
-//     final barMaxWidth = MediaQuery.of(context).size.width * 0.7;
-
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         AppText(
-//           text: name,
-//           size: "large",
-//           color: AppColors.primaryLight,
-//           isBold: true,
-//         ),
-//         const SizedBox(height: 4),
-//         Stack(
-//           children: [
-//             // Background bar representing allocation
-//             Container(
-//               height: barHeight,
-//               width: barMaxWidth,
-//               decoration: BoxDecoration(
-//                 color: AppColors.primaryLight.withOpacity(0.2),
-//                 borderRadius: BorderRadius.circular(8),
-//               ),
-//             ),
-//             // Filled bar representing expense relative to allocation
-//             Container(
-//               height: barHeight,
-//               width: barMaxWidth * percent,
-//               decoration: BoxDecoration(
-//                 color: AppColors.purple.withOpacity(0.8),
-//                 borderRadius: BorderRadius.circular(8),
-//               ),
-//             ),
-//             Positioned.fill(
-//               child: Center(
-//                 child: AppText(
-//                   // Show expense and allocation like "₱X / ₱Y"
-//                   text: "${formatter.format(amount)} / ${formatter.format(allocationAmount)}",
-//                   size: "small",
-//                   color: AppColors.primaryLight,
-//                   isBold: true,
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ],
-//     );
-//   }
-// }

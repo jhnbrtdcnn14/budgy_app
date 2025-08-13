@@ -1,22 +1,24 @@
-
 import 'package:budgy_app/models/budget_transaction_model.dart';
 
-class Budget {
+class Wallet {
   final String id;
-  final double salary;
-  final Map<String, Map<String, double>> allocation;
+  final double? salary; // Nullable for custom wallets
+  final Map<String, dynamic> allocation; // Can hold amount-only for custom
   final DateTime date;
+  final bool isCustom; // New field
+
   final Map<String, double> added;
   final Map<String, double> deducted;
   final Map<String, String> addedLabels;
   final Map<String, String> deductedLabels;
   final List<TransactionEntry> transactions;
 
-  Budget({
+  Wallet({
     required this.id,
-    required this.salary,
+    this.salary,
     required this.allocation,
     required this.date,
+    this.isCustom = false,
     Map<String, double>? added,
     Map<String, double>? deducted,
     Map<String, String>? addedLabels,
@@ -28,7 +30,6 @@ class Budget {
         deductedLabels = deductedLabels ?? {},
         transactions = transactions ?? [];
 
-  /// Adds a transaction and updates added/deducted maps and labels accordingly.
   void addTransaction(TransactionEntry transaction) {
     transactions.add(transaction);
 
@@ -48,6 +49,7 @@ class Budget {
         'salary': salary,
         'allocation': allocation,
         'date': date.toIso8601String(),
+        'isCustom': isCustom,
         'added': added,
         'deducted': deducted,
         'addedLabels': addedLabels,
@@ -55,19 +57,12 @@ class Budget {
         'transactions': transactions.map((t) => t.toJson()).toList(),
       };
 
-  factory Budget.fromJson(Map<String, dynamic> json) => Budget(
+  factory Wallet.fromJson(Map<String, dynamic> json) => Wallet(
         id: json['id'],
-        salary: (json['salary'] as num).toDouble(),
-        allocation: (json['allocation'] as Map<String, dynamic>).map(
-          (key, value) => MapEntry(
-            key,
-            {
-              'percentage': (value['percentage'] as num).toDouble(),
-              'amount': (value['amount'] as num).toDouble(),
-            },
-          ),
-        ),
+        salary: (json['salary'] as num?)?.toDouble(),
+        allocation: Map<String, dynamic>.from(json['allocation']),
         date: DateTime.parse(json['date']),
+        isCustom: json['isCustom'] ?? false,
         added: (json['added'] as Map<String, dynamic>?)
                 ?.map((k, v) => MapEntry(k, (v as num).toDouble())) ??
             {},

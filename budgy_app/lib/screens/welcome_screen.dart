@@ -2,7 +2,7 @@
 
 import 'package:budgy_app/components/colors.dart';
 import 'package:budgy_app/components/text.dart';
-import 'package:budgy_app/screens/calculation_screen.dart';
+import 'package:budgy_app/screens/create_wallet_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
